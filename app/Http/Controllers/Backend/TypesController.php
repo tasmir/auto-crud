@@ -36,7 +36,7 @@ class TypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $page_data = (object)[
             "root_icon" => $this->root_icon,
@@ -47,9 +47,18 @@ class TypesController extends Controller
             "submodel" => ""
         ];
         $model_data = Field::all();
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'status_code' => '200',
+                'message' => "",
+                'data' => $model_data
+            ]);
+        } else {
 //        $model_data = [];
-        //        return view('pages.' . $root_folder . '.index', compact('submodel', 'root_icon', 'root_path', 'root_title', 'model_data', 'venue', 'dependency'));
-        return view("$page_data->root_folder.index", compact('model_data', 'page_data'));
+            //        return view('pages.' . $root_folder . '.index', compact('submodel', 'root_icon', 'root_path', 'root_title', 'model_data', 'venue', 'dependency'));
+            return view("$page_data->root_folder.index", compact('model_data', 'page_data'));
+        }
     }
 
     /**
@@ -90,7 +99,7 @@ class TypesController extends Controller
         $dependency = $this->dependency;
         $submodel = "Create";
 
-        if($request->ajax()){
+        if ($request->ajax()) {
             try {
                 $type = json_decode($request->type, true);
                 $fields = json_decode($request->fields, true);
@@ -182,14 +191,14 @@ class TypesController extends Controller
         ];
 
         $amenity = Field::findOrFail($types);
-        if($request->ajax()){
+        if ($request->ajax()) {
             return response()->json([
                 'status' => 'success',
                 'status_code' => '200',
                 'message' => "",
                 'data' => $amenity
             ]);
-        }else {
+        } else {
 
             return view("$page_data->root_folder.create", compact('page_data', 'amenity',));
         }
@@ -210,7 +219,7 @@ class TypesController extends Controller
         $submodel = "Update";
         $path = null;
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             try {
 
@@ -312,21 +321,21 @@ class TypesController extends Controller
 
     public function slugChecking(Request $request)
     {
-        if(isset($request->id)) {
-            $count = Field::where('id', '!=' , $request->id)->where('slug', $request->slug)->count();
+        if (isset($request->id)) {
+            $count = Field::where('id', '!=', $request->id)->where('slug', $request->slug)->count();
 //            $count = Field::where('id', '!=' , $request->id)->where(DB::raw('lower(name)'), trim(strtolower($request->name)))->count();
         } else {
             $count = Field::where(DB::raw('lower(name)'), trim(strtolower($request->name)))->count();
         }
-        if($count == 0) {
+        if ($count == 0) {
             return response()->json([
                 'status' => '200',
                 'slug' => $request->slug,
             ]);
-        }else {
+        } else {
             return response()->json([
                 'status' => '200',
-                'slug' => $request->slug.'-'.$count,
+                'slug' => $request->slug . '-' . $count,
             ]);
         }
     }

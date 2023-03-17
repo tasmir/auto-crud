@@ -101,7 +101,8 @@ export default function FormGenerator() {
         axios.post(`${action}`, formData)
             .then((response) => response)
             .then((data) => {
-                console.log(data.data)
+                window.location.assign(`${baseURL}/backend/types`)
+                // console.log(data.data)
                 // setDataType({...dataType, slug: data.data.slug})
             });
     }

@@ -14,3 +14,4 @@ import './bootstrap';
 
 import './components/FormGenerator';
 import './components/RouteFields';
+import './components/SideMenuOfTypes';

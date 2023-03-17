@@ -21,16 +21,17 @@ $current_params = request()
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-tags"></i></div>
                     Types
                 </a>
-                <div class="sb-sidenav-menu-heading">All Types</div>
+                <div id="side-menu-of-types"></div>
+{{--                <div class="sb-sidenav-menu-heading">All Types</div>--}}
                 @php
-                $fields = \App\Models\Field::where("status", 1)->get();
+               // $fields = \App\Models\Field::where("status", 1)->get();
                 @endphp
-                @foreach($fields as $key => $field)
-                <a class="nav-link" href="{{route(trans("lang.backend.name_prefix")."field.index",$field)}}">
-                    <div class="sb-nav-link-icon"><i class="fa-solid fa-tags"></i></div>
-                    {{$field->name}}
-                </a>
-                @endforeach
+{{--                @foreach($fields as $key => $field)--}}
+{{--                <a class="nav-link" href="{{route(trans("lang.backend.name_prefix")."field.index",$field)}}">--}}
+{{--                    <div class="sb-nav-link-icon"><i class="fa-solid fa-tags"></i></div>--}}
+{{--                    {{$field->name}}--}}
+{{--                </a>--}}
+{{--                @endforeach--}}
                 <div class="sb-sidenav-menu-heading">Interface</div>
                 <?php
                 $inMenu = false;
