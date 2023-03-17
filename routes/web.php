@@ -29,14 +29,15 @@ Route::get('spa', function () {
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix(trans("lang.backend.url_prefix"))->name(trans("lang.backend.name_prefix"))->group(function () {
 
-    Route::prefix('/venue')->group(
-        function () {
-            Route::resource('amenity', App\Http\Controllers\Backend\AmenityController::class);
-            Route::post('amenity-data-rearange', [App\Http\Controllers\Backend\AmenityController::class, 'rearangStore'])->name('amenity.rearang.store');
-            Route::post('amenity-data-status', [App\Http\Controllers\Backend\AmenityController::class, 'statusChange'])->name('amenity.status.change');
-            // Route::get('{id}/edit', [App\Http\Controllers\Backend\VenueController::class, 'edit'])->name('venue.edit');
-        }
-    );
+//    Route::prefix('/venue')->group(
+//        function () {
+//            Route::resource('amenity', App\Http\Controllers\Backend\AmenityController::class);
+//            Route::post('amenity-data-rearange', [App\Http\Controllers\Backend\AmenityController::class, 'rearangStore'])->name('amenity.rearang.store');
+//            Route::post('amenity-data-status', [App\Http\Controllers\Backend\AmenityController::class, 'statusChange'])->name('amenity.status.change');
+//            // Route::get('{id}/edit', [App\Http\Controllers\Backend\VenueController::class, 'edit'])->name('venue.edit');
+//        }
+//    );
+//    Route::get('types/{type:}/edit', [App\Http\Controllers\Backend\TypesController::class, 'edit'])->name('types.edit');
     Route::resource('types', App\Http\Controllers\Backend\TypesController::class);
 
     Route::prefix('{field:slug}')->name("field.")->group(
@@ -47,7 +48,7 @@ Route::prefix(trans("lang.backend.url_prefix"))->name(trans("lang.backend.name_p
         }
     );
 
-    Route::resource('category', App\Http\Controllers\Backend\EventCategoryController::class)->except(['create', 'show']);
+//    Route::resource('category', App\Http\Controllers\Backend\EventCategoryController::class)->except(['create', 'show']);
 
 });
 

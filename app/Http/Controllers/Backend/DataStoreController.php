@@ -19,6 +19,7 @@ class DataStoreController extends Controller
             "dependency" => '',
             "parent" => $field->slug,
             "submodel" => "",
+            "data" => $field,
         ];
 //        $model_data = Field::all();
         $model_data = [];
@@ -37,6 +38,7 @@ class DataStoreController extends Controller
             "dependency" => '',
             "parent" => $field->slug,
             "submodel" => "Create",
+            "data" => $field,
         ];
 
 

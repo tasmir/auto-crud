@@ -14,10 +14,10 @@ class Field extends Model
     use SoftDeletes;
 
     protected $guarded =['id', 'created_at', 'updated_at'];
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+//    public function getRouteKeyName()
+//    {
+//        return 'slug';
+//    }
 
     public function createdBy(){
         return $this->belongsTo(User::class, 'created_by', 'id');

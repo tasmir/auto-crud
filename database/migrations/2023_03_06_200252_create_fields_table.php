@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('icon',100 )->nullable();
             $table->string('status',10 )->nullable();
             $table->json('field')->nullable();
+            $table->json('route')->nullable();
             $table->unsignedBigInteger("created_by")->nullable();
             $table->unsignedBigInteger("updated_by")->nullable();
             $table->unsignedBigInteger("deleted_by")->nullable();

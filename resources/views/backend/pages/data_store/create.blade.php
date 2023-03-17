@@ -25,6 +25,12 @@
         <div class="card-body">
             <form method="POST" action="{{route($page_data->root_path.'.store',[$page_data->parent])}}" >
                 @csrf
+
+                @foreach(json_decode($page_data->data->field, true) as $input)
+                    @include("backend.pages.data_store.partials.text", compact('input'))
+{{--                    {{dd($input)}}--}}
+                @endforeach
+
 {{--                <div id="type-form-generator"></div>--}}
                 {{--                <div class="banner-imager">--}}
                 {{--                    @php--}}

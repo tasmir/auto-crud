@@ -23,8 +23,10 @@
             </nav>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{route($page_data->root_path.'.store')}}" >
+            <form method="POST" action="#" >
                 @csrf
+                <input type="hidden" value="{{$page_data->action}}" id="action_url">
+                <input type="hidden" value="{{ $page_data->submodel }}" id="to_do">
                 <div id="type-form-generator"></div>
                 {{--                <div class="banner-imager">--}}
                 {{--                    @php--}}

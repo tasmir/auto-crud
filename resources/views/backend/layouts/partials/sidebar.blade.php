@@ -26,7 +26,7 @@ $current_params = request()
                 $fields = \App\Models\Field::where("status", 1)->get();
                 @endphp
                 @foreach($fields as $key => $field)
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{route(trans("lang.backend.name_prefix")."field.index",$field)}}">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-tags"></i></div>
                     {{$field->name}}
                 </a>
@@ -58,7 +58,7 @@ $current_params = request()
                         {{--                        <a class="nav-link @if ($currentRoute == "$venue.index" || $currentRoute == "$venue.create" || $currentRoute == "$venue.edit") active @endif"--}}
                         {{--                            href="{{ route("$venue.index") }}">Venue List</a>--}}
                         <a class="nav-link @if ($currentRoute == "$amenity.index" || $currentRoute == "$amenity.create" || $currentRoute == "$amenity.edit") active @endif"
-                           href="{{ route("$amenity.index") }}">Amenities</a>
+                           href="{{-- route("$amenity.index") --}}">Amenities</a>
                     </nav>
                 </div>
                 <a class="nav-link" href="#">

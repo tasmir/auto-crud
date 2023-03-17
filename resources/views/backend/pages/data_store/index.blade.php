@@ -37,11 +37,17 @@
                             <thead>
                             <tr>
 {{--                                <th class="text-center">Banner</th>--}}
-                                <th>Name</th>
-                                <th>Slug</th>
-                                <th>Status</th>
-                                <th>Icon</th>
-                                <th>Updated</th>
+{{--                                <th>Name</th>--}}
+{{--                                <th>Slug</th>--}}
+{{--                                <th>Status</th>--}}
+{{--                                <th>Icon</th>--}}
+{{--                                <th>Updated</th>--}}
+                                @php
+                                $table_header = json_decode($page_data->data->route, true);
+                                @endphp
+                                @foreach($table_header['index'] as $r => $index_field)
+                                    <th>{{$index_field}}</th>
+                                @endforeach
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                             </thead>

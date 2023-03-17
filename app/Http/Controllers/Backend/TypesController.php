@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Field;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Session;
 
 class TypesController extends Controller
 {
@@ -64,7 +65,8 @@ class TypesController extends Controller
             "root_title" => $this->root_title,
             "root_folder" => $this->root_folder,
             "dependency" => $this->dependency,
-            "submodel" => "Create"
+            "submodel" => "Create",
+            "action" => route("$this->root_path.store")
         ];
 
 
@@ -83,30 +85,68 @@ class TypesController extends Controller
      */
     public function store(Request $request)
     {
-//        dd($request->all());
-        try {
-            $root_path = $this->root_path;
-            $root_title = $this->root_title;
-            $dependency = $this->dependency;
-            $submodel = "Create";
-            DB::beginTransaction();
-            $field = Field::create([
-                "name" => $request->name,
-                "slug" => $request->slug,
-                "status" => $request->status,
-                "icon" => $request->icon,
-                'field' => json_encode($request->field, true)
-            ]);
-            DB::commit();
-            if ($field) {
-                Session::flash('success', "$root_title Information $submodel Successfully");
-            } else {
-                Session::flash('error', "Could Not $submodel $root_title Information");
+        $root_path = $this->root_path;
+        $root_title = $this->root_title;
+        $dependency = $this->dependency;
+        $submodel = "Create";
+
+        if($request->ajax()){
+            try {
+                $type = json_decode($request->type, true);
+                $fields = json_decode($request->fields, true);
+                $route = json_decode($request->route, true);
+
+                DB::beginTransaction();
+                $field = Field::create([
+                    "name" => $type['name'],
+                    "slug" => $type['slug'],
+                    "status" => $type['status'],
+                    "icon" => $type['icon'],
+                    'field' => json_encode($fields, true),
+                    'route' => json_encode($route, true),
+                ]);
+                DB::commit();
+
+                return response()->json([
+                    'status' => 'success',
+                    'status_code' => '200',
+                    'message' => "$root_title Information $submodel Successfully",
+                    'data' => $field
+                ]);
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $ex->getMessage(),
+                    'status_code' => $ex->getCode(),
+                    'data' => ''
+                ]);
             }
-            return redirect()->route("$root_path.index");
-        } catch (\Exception $ex) {
-            Session::flash('error', $ex->getMessage());
-            return redirect()->back();
+        } else {
+//        dd($request->all());
+            try {
+
+                DB::beginTransaction();
+                $field = Field::create([
+                    "name" => $request->name,
+                    "slug" => $request->slug,
+                    "status" => $request->status,
+                    "icon" => $request->icon,
+                    'field' => json_encode($request->field, true),
+                    'route' => json_encode($request->route, true),
+                ]);
+                DB::commit();
+                if ($field) {
+                    Session::flash('success', "$root_title Information $submodel Successfully");
+                } else {
+                    Session::flash('error', "Could Not $submodel $root_title Information");
+                }
+                return redirect()->route("$root_path.index");
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                Session::flash('error', $ex->getMessage());
+                return redirect()->back();
+            }
         }
     }
 
@@ -127,19 +167,32 @@ class TypesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Field $types)
+    public function edit(Request $request, $types)
     {
+//        $sql = Field::where('id', '!=' , $request->id)->where(DB::raw('lower(name)'), trim(strtolower($request->name)))->get();
+//        dd($sql);
         $page_data = (object)[
             "root_icon" => $this->root_icon,
             "root_path" => $this->root_path,
             "root_title" => $this->root_title,
             "root_folder" => $this->root_folder,
             "dependency" => $this->dependency,
-            "submodel" => "Update"
+            "submodel" => "Update",
+            "action" => route("$this->root_path.update", $types)
         ];
-        $amenity = $types;
 
-        return view("$page_data->root_folder.create", compact('page_data', 'amenity',));
+        $amenity = Field::findOrFail($types);
+        if($request->ajax()){
+            return response()->json([
+                'status' => 'success',
+                'status_code' => '200',
+                'message' => "",
+                'data' => $amenity
+            ]);
+        }else {
+
+            return view("$page_data->root_folder.create", compact('page_data', 'amenity',));
+        }
     }
 
     /**
@@ -149,37 +202,76 @@ class TypesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Amenity $amenity)
+    public function update(Request $request, $types)
     {
-        //        dd($request->all());
-        try {
-            $root_path = $this->root_path;
-            $root_title = $this->root_title;
-            $dependency = $this->dependency;
-            $submodel = "Update";
-            $path = null;
-            if ($request->file('image')) {
+        $root_path = $this->root_path;
+        $root_title = $this->root_title;
+        $dependency = $this->dependency;
+        $submodel = "Update";
+        $path = null;
 
-                $file = $request->file('image');
-                $path = $this->FileUploadHelper($file, 'amenity');
+        if($request->ajax()){
+
+            try {
+
+
+                $type = json_decode($request->type, true);
+                $fields = json_decode($request->fields, true);
+                $route = json_decode($request->route, true);
+                $field = Field::findOrFail($types);
+                DB::beginTransaction();
+                $field->update([
+                    "name" => $type['name'],
+                    "slug" => $type['slug'],
+                    "status" => $type['status'],
+                    "icon" => $type['icon'],
+                    'field' => json_encode($fields, true),
+                    'route' => json_encode($route, true),
+                ]);
+                DB::commit();
+
+                return response()->json([
+                    'status' => 'success',
+                    'status_code' => '200',
+                    'message' => "$root_title Information $submodel Successfully",
+                    'data' => $field
+                ]);
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $ex->getMessage(),
+                    'status_code' => $ex->getCode(),
+                    'data' => ''
+                ]);
             }
-            DB::beginTransaction();
-            $amenity->update([
-                "name" => $request->name,
-                "order" => $request->order,
-                "status" => $request->status,
-                "image" => $path ?? $amenity->image ?? null,
-            ]);
-            DB::commit();
-            if ($amenity) {
-                Session::flash('success', "$root_title Information $submodel Successfully");
-            } else {
-                Session::flash('error', "Could Not $submodel $root_title Information");
+        } else {
+            //        dd($request->all());
+            try {
+
+                if ($request->file('image')) {
+
+                    $file = $request->file('image');
+                    $path = $this->FileUploadHelper($file, 'amenity');
+                }
+                DB::beginTransaction();
+                $amenity->update([
+                    "name" => $request->name,
+                    "order" => $request->order,
+                    "status" => $request->status,
+                    "image" => $path ?? $amenity->image ?? null,
+                ]);
+                DB::commit();
+                if ($amenity) {
+                    Session::flash('success', "$root_title Information $submodel Successfully");
+                } else {
+                    Session::flash('error', "Could Not $submodel $root_title Information");
+                }
+                return redirect()->route("$dependency$root_path.index", $amenity);
+            } catch (\Exception $ex) {
+                Session::flash('error', $ex->getMessage());
+                return redirect()->back();
             }
-            return redirect()->route("$dependency$root_path.index", $amenity);
-        } catch (\Exception $ex) {
-            Session::flash('error', $ex->getMessage());
-            return redirect()->back();
         }
     }
 
@@ -220,7 +312,12 @@ class TypesController extends Controller
 
     public function slugChecking(Request $request)
     {
-        $count = Field::where(DB::raw('lower(name)'), trim(strtolower($request->name)))->count();
+        if(isset($request->id)) {
+            $count = Field::where('id', '!=' , $request->id)->where('slug', $request->slug)->count();
+//            $count = Field::where('id', '!=' , $request->id)->where(DB::raw('lower(name)'), trim(strtolower($request->name)))->count();
+        } else {
+            $count = Field::where(DB::raw('lower(name)'), trim(strtolower($request->name)))->count();
+        }
         if($count == 0) {
             return response()->json([
                 'status' => '200',

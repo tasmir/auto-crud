@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import RouteFields from "./RouteFields";
 
 export default function FormGenerator() {
+
     const [dataType, setDataType] = useState({status: 1});
     const [clickCount, setClickCount] = useState(0);
     const [click, setClick] = useState([{id: clickCount, name: '', type: 'text'}]);
+    const [routeField, setRouteField] = useState({});
     const deleteByValue = value => {
         setClick(oldValues => {
             return oldValues.filter(click => click.id !== value)
@@ -19,29 +21,39 @@ export default function FormGenerator() {
             return oldValues.filter(clickOption => clickOption !== value)
         })
     }
+    const [baseURL, setBaseURL] = useState();
+    const [currentURL, setCurrentURL] = useState();
+    const [action, setAction] = useState();
+    const [toDo, setToDo] = useState();
 
-    // const slugChecking = () => {
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ title: 'React POST Request Example' })
-    //     };
-    //     return fetch("/type-slug-checker", requestOptions)
-    //         .then((response) => response.json())
-    //         .then((data) => {console.log(data)});
-    //         // .then((data) => setUser(data));
-    // }
+    const loadPageData = () => {
+        useEffect(() => {
+            setBaseURL(document.getElementById('base_url').value);
+            setCurrentURL(document.getElementById('current_url').value);
+            setAction(document.getElementById('action_url').value);
+            setToDo(document.getElementById('to_do').value);
+            if (document.getElementById('to_do').value === "Update") {
+                axios.get(document.getElementById('current_url').value)
+                    .then((response) => response)
+                    .then((data) => {
+                        setDataType(data.data.data)
+                        setClick(JSON.parse(data.data.data.field))
+                        setRouteField(JSON.parse(data.data.data.route))
+                    });
+            }
+        }, [])
+    }
+    loadPageData();
 
     const slugChecking = (name, slug) => {
-        axios.post('/type-slug-checker', {
+        axios.post(`${baseURL}/type-slug-checker`, {
             name: name,
             slug: slug,
+            id: dataType.id
         }).then((response) => response)
             .then((data) => {
-                setDataType({...dataType, slug: data.data.slug})
+                setDataType({...dataType, name: name, slug: data.data.slug})
             });
-        // .then((data) => setUser(data));
-        // console.log(res);
     }
 
     const handleChange = (id, updatedItem) => {
@@ -53,14 +65,16 @@ export default function FormGenerator() {
         if (name === 'name') {
 
             // setDataType({...dataType, [name]: value})
-            setDataType({
-                ...dataType, name: value, slug: value.trim().toLowerCase().replace(/ /g, '-')
-                    .replace(/[^\w-]+/g, '')
-            })
             if (3 <= value.length) {
                 slugChecking(value, value.trim().toLowerCase().replace(/ /g, '-')
                     .replace(/[^\w-]+/g, ''));
+            } else {
+                setDataType({
+                    ...dataType, name: value, slug: value.trim().toLowerCase().replace(/ /g, '-')
+                        .replace(/[^\w-]+/g, '')
+                })
             }
+
         } else if (name === 'iconFull') {
             let start = Number(1) + value.indexOf('"');
             let end = value.lastIndexOf('"') - Number(start);
@@ -73,6 +87,23 @@ export default function FormGenerator() {
         } else {
             setDataType({...dataType, [name]: value})
         }
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        if(toDo === "Update") {
+            formData.append("_method", "PUT");
+        }
+        formData.append("type", JSON.stringify(dataType));
+        formData.append("fields", JSON.stringify(click));
+        formData.append("route", JSON.stringify(routeField));
+        axios.post(`${action}`, formData)
+            .then((response) => response)
+            .then((data) => {
+                console.log(data.data)
+                // setDataType({...dataType, slug: data.data.slug})
+            });
     }
 
     return (
@@ -360,10 +391,11 @@ export default function FormGenerator() {
                 </div>
             </fieldset>
 
-            <RouteFields click={click} dataType={dataType}/>
+            <RouteFields click={click} dataType={dataType} routeField={routeField} setRouteField={setRouteField}/>
 
             <div className="text-left">
-                <input className="btn btn-main" type="submit" value="Submit"/>
+                {/*<input className="btn btn-main" type="button" value="Submit" onClick={onSubmit}/>*/}
+                <button className="btn btn-main" type="button" onClick={onSubmit}>Submit</button>
             </div>
 
         </>
