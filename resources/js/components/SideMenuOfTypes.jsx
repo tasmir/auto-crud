@@ -48,17 +48,17 @@ export default function SideMenuOfTypes() {
         <>
             {types ? (
                 <>
-                    <div className="sb-sidenav-menu-heading">All Types</div>
+                    {/*<div className="sb-sidenav-menu-heading">All Types</div>*/}
                     {/*  */}
                     <a className={`nav-link ${inMenu ? `active` : `collapsed`}`} href="#"
-                       data-bs-toggle="collapse" data-bs-target="#collapseVenues"
+                       data-bs-toggle="collapse" data-bs-target="#collapseMenuType"
                        aria-expanded={inMenu ? "true" : "false"}
-                       aria-controls="collapseVenues">
-                        <div className="sb-nav-link-icon"><i className="fa-solid fa-location-dot"></i></div>
-                        Venues
+                       aria-controls="collapseMenuType">
+                        <div className="sb-nav-link-icon"><i className="fa-solid fa-tags"></i></div>
+                        All Types Menu
                         <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
                     </a>
-                    <div className={`collapse ${inMenu ? `show` : ``}`} id="collapseVenues"
+                    <div className={`collapse ${inMenu ? `show` : ``}`} id="collapseMenuType"
                          aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav className="sb-sidenav-menu-nested nav">
 
