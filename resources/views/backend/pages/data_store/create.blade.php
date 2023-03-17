@@ -1,7 +1,8 @@
 @extends("backend.layouts.master")
 @push('title', $page_data->root_title.' '.$page_data->submodel)
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{route($page_data->root_path.'.index', [$page_data->parent])}}">{{$page_data->root_title}}</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{route($page_data->root_path.'.index', [$page_data->parent])}}">{{$page_data->root_title}}</a></li>
     <li class="breadcrumb-item active" aria-current="page"><span>{{$page_data->submodel}}</span></li>
 @endsection
 @section('content')
@@ -14,7 +15,8 @@
                 </h4>
 
                 <form class="form-inline">
-                    <a class="btn btn-main btn-sm" href="{{route($page_data->root_path.'.index', [$page_data->parent])}}"
+                    <a class="btn btn-main btn-sm"
+                       href="{{route($page_data->root_path.'.index', [$page_data->parent])}}"
                        title="Back To {{trim($page_data->root_title)}}">
                         <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back
                     </a>
@@ -23,15 +25,26 @@
             </nav>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{route($page_data->root_path.'.store',[$page_data->parent])}}" >
+            <form method="POST"
+                  @if($page_data->submodel == "Update")
+                  action="{{route($page_data->root_path.'.update',[$page_data->parent, $dataStore->id])}}"
+                  @else
+                  action="{{route($page_data->root_path.'.store',[$page_data->parent])}}" @endif>
                 @csrf
-
+                @if($page_data->submodel == "Update")
+                    @method('PUT')
+                @endif
+                @php
+                $data_value = json_decode($dataStore->data, true);
+                @endphp
                 @foreach(json_decode($page_data->data->field, true) as $input)
-                    @include("backend.pages.data_store.partials.text", compact('input'))
-{{--                    {{dd($input)}}--}}
+                    @if($input["type"] == "text" || $input["type"] == "date" || $input["type"] == "email" || $input["type"] == "number" || $input["type"] == "tel" )
+                        @include("backend.pages.data_store.partials.text", ['input' => $input, 'value' => isset($data_value[$input["name"]]) ? $data_value[$input["name"]] : null])
+                    @endif
+                    {{--                    {{dd($input["type"])}}--}}
                 @endforeach
 
-{{--                <div id="type-form-generator"></div>--}}
+                {{--                <div id="type-form-generator"></div>--}}
                 {{--                <div class="banner-imager">--}}
                 {{--                    @php--}}
                 {{--                        $path = asset('assets/images/notfound.png');--}}
@@ -43,104 +56,104 @@
                 {{--                    <input type="file" class="form-control-file" id="banner_image" name="banner_image">--}}
                 {{--                </div>--}}
 
-{{--                <fieldset>--}}
-{{--                    <legend>Core</legend>--}}
-{{--                    <div class="form-group mb-3">--}}
-{{--                        <label for="name">Name</label>--}}
-{{--                        <input id="name" class="form-control" name="name" type="text" placeholder=""--}}
-{{--                               required="required">--}}
-{{--                        @error('name')--}}
-{{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
-{{--                        @enderror--}}
-{{--                    </div>--}}
-{{--                    <div class="form-group mb-3">--}}
-{{--                        <label for="name">Slug</label>--}}
-{{--                        <input id="slug" class="form-control" name="slug" type="text" placeholder=""--}}
-{{--                               required="required">--}}
-{{--                        @error('slug')--}}
-{{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
-{{--                        @enderror--}}
-{{--                    </div>--}}
-{{--                    <div class="form-group mb-3">--}}
-{{--                        <label for="name">Icon</label>--}}
-{{--                        <input id="icon" class="form-control" name="icon" type="text" placeholder="Icon"--}}
-{{--                               required="required">--}}
-{{--                        @error('icon')--}}
-{{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
-{{--                        @enderror--}}
-{{--                    </div>--}}
+                {{--                <fieldset>--}}
+                {{--                    <legend>Core</legend>--}}
+                {{--                    <div class="form-group mb-3">--}}
+                {{--                        <label for="name">Name</label>--}}
+                {{--                        <input id="name" class="form-control" name="name" type="text" placeholder=""--}}
+                {{--                               required="required">--}}
+                {{--                        @error('name')--}}
+                {{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
+                {{--                        @enderror--}}
+                {{--                    </div>--}}
+                {{--                    <div class="form-group mb-3">--}}
+                {{--                        <label for="name">Slug</label>--}}
+                {{--                        <input id="slug" class="form-control" name="slug" type="text" placeholder=""--}}
+                {{--                               required="required">--}}
+                {{--                        @error('slug')--}}
+                {{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
+                {{--                        @enderror--}}
+                {{--                    </div>--}}
+                {{--                    <div class="form-group mb-3">--}}
+                {{--                        <label for="name">Icon</label>--}}
+                {{--                        <input id="icon" class="form-control" name="icon" type="text" placeholder="Icon"--}}
+                {{--                               required="required">--}}
+                {{--                        @error('icon')--}}
+                {{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
+                {{--                        @enderror--}}
+                {{--                    </div>--}}
 
 
-{{--                    <div class="form-group mb-3">--}}
-{{--                        <label for="status">Status</label>--}}
-{{--                        <select id="status" class="form-control" name="status">--}}
-{{--                            <option value="1">Active</option>--}}
-{{--                            <option value="0">Inactive</option>--}}
-{{--                        </select>--}}
-{{--                        @error('status')--}}
-{{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
-{{--                        @enderror--}}
-{{--                    </div>--}}
-{{--                </fieldset>--}}
+                {{--                    <div class="form-group mb-3">--}}
+                {{--                        <label for="status">Status</label>--}}
+                {{--                        <select id="status" class="form-control" name="status">--}}
+                {{--                            <option value="1">Active</option>--}}
+                {{--                            <option value="0">Inactive</option>--}}
+                {{--                        </select>--}}
+                {{--                        @error('status')--}}
+                {{--                        <div class="alert alert-danger mt-1">{{ $message }}</div>--}}
+                {{--                        @enderror--}}
+                {{--                    </div>--}}
+                {{--                </fieldset>--}}
 
 
-{{--                <fieldset id="type-form-generator"></fieldset>--}}
-{{--                <fieldset>--}}
-{{--                    <legend style="padding-left: 0;">--}}
-{{--                        <button class="btn btn-main  btn-sm"><i class="fa fa-plus"></i></button>--}}
-{{--                        Fields Setup--}}
-{{--                    </legend>--}}
-{{--                    <div class="row">--}}
-{{--                        <div class="col-6">--}}
-{{--                            <fieldset>--}}
-{{--                                <legend class="close--button"><i class="fa-solid fa-xmark"></i></legend>--}}
+                {{--                <fieldset id="type-form-generator"></fieldset>--}}
+                {{--                <fieldset>--}}
+                {{--                    <legend style="padding-left: 0;">--}}
+                {{--                        <button class="btn btn-main  btn-sm"><i class="fa fa-plus"></i></button>--}}
+                {{--                        Fields Setup--}}
+                {{--                    </legend>--}}
+                {{--                    <div class="row">--}}
+                {{--                        <div class="col-6">--}}
+                {{--                            <fieldset>--}}
+                {{--                                <legend class="close--button"><i class="fa-solid fa-xmark"></i></legend>--}}
 
-{{--                                <div class="form-group mb-3">--}}
-{{--                                    <label for="status">Name</label>--}}
-{{--                                    <input class="form-control" name="name">--}}
-{{--                                </div>--}}
+                {{--                                <div class="form-group mb-3">--}}
+                {{--                                    <label for="status">Name</label>--}}
+                {{--                                    <input class="form-control" name="name">--}}
+                {{--                                </div>--}}
 
-{{--                                <div class="form-group mb-3">--}}
-{{--                                    <label for="status">Type</label>--}}
-{{--                                    <select class="form-control" name="type">--}}
-{{--                                        <option value="text">Text</option>--}}
-{{--                                        <option value="date">Date</option>--}}
-{{--                                        <option value="email">Email</option>--}}
-{{--                                    </select>--}}
-{{--                                </div>--}}
+                {{--                                <div class="form-group mb-3">--}}
+                {{--                                    <label for="status">Type</label>--}}
+                {{--                                    <select class="form-control" name="type">--}}
+                {{--                                        <option value="text">Text</option>--}}
+                {{--                                        <option value="date">Date</option>--}}
+                {{--                                        <option value="email">Email</option>--}}
+                {{--                                    </select>--}}
+                {{--                                </div>--}}
 
-{{--                                <div class="form-group mb-3">--}}
-{{--                                    <label for="status">Option</label>--}}
-{{--                                    <div class="input-group">--}}
-{{--                                        <input class="form-control" value="Key" readonly>--}}
-{{--                                        <input class="form-control" value="Value" readonly>--}}
-{{--                                        <span class="input-group-text"><i--}}
-{{--                                                class="fa-solid fa-circle-exclamation"></i></span>--}}
-{{--                                    </div>--}}
-{{--                                    <div>--}}
-{{--                                        <div class="input-group">--}}
-{{--                                            <input class="form-control" value="Options">--}}
-{{--                                            <input class="form-control" value="Options">--}}
-{{--                                            <span class="input-group-text" id="basic-addon2"><i--}}
-{{--                                                    class="fa-solid fa-xmark"></i>&nbsp;</span>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <div class="form-group mb-3">--}}
-{{--                                    <input class="form-control" value="Order" readonly>--}}
-{{--                                </div>--}}
-{{--                                <div class="form-group">--}}
-{{--                                    <input class="form-control" value="Action" readonly>--}}
-{{--                                </div>--}}
+                {{--                                <div class="form-group mb-3">--}}
+                {{--                                    <label for="status">Option</label>--}}
+                {{--                                    <div class="input-group">--}}
+                {{--                                        <input class="form-control" value="Key" readonly>--}}
+                {{--                                        <input class="form-control" value="Value" readonly>--}}
+                {{--                                        <span class="input-group-text"><i--}}
+                {{--                                                class="fa-solid fa-circle-exclamation"></i></span>--}}
+                {{--                                    </div>--}}
+                {{--                                    <div>--}}
+                {{--                                        <div class="input-group">--}}
+                {{--                                            <input class="form-control" value="Options">--}}
+                {{--                                            <input class="form-control" value="Options">--}}
+                {{--                                            <span class="input-group-text" id="basic-addon2"><i--}}
+                {{--                                                    class="fa-solid fa-xmark"></i>&nbsp;</span>--}}
+                {{--                                        </div>--}}
+                {{--                                    </div>--}}
+                {{--                                </div>--}}
+                {{--                                <div class="form-group mb-3">--}}
+                {{--                                    <input class="form-control" value="Order" readonly>--}}
+                {{--                                </div>--}}
+                {{--                                <div class="form-group">--}}
+                {{--                                    <input class="form-control" value="Action" readonly>--}}
+                {{--                                </div>--}}
 
-{{--                            </fieldset>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </fieldset>--}}
+                {{--                            </fieldset>--}}
+                {{--                        </div>--}}
+                {{--                    </div>--}}
+                {{--                </fieldset>--}}
 
-{{--                <div class="text-left">--}}
-{{--                    <input class="btn btn-main" type="submit" value="Submit">--}}
-{{--                </div>--}}
+                <div class="text-left">
+                    <input class="btn btn-main" type="submit" value="Submit">
+                </div>
 
             </form>
         </div>

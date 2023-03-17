@@ -17,7 +17,7 @@ $current_params = request()
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Dashboard
                 </a>
-                <a class="nav-link" href="{{route(trans('lang.backend.name_prefix')."types.index")}}">
+                <a class="nav-link @if ($currentRoute == trans('lang.backend.name_prefix') . 'types.index') active @endif" href="{{route(trans('lang.backend.name_prefix')."types.index")}}">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-tags"></i></div>
                     Types
                 </a>

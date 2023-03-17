@@ -14,12 +14,13 @@
                 </h4>
 
                 <form class="form-inline">
-{{--                    @can("user_create")--}}
-                        <a class="btn btn-main  btn-sm" href="{{route("$page_data->root_path.create", [$page_data->parent])}}"
-                           title="Add {{trim($page_data->root_title)}}">
-                            <i class="fa fa-plus"></i>&nbsp;&nbsp;Add
-                        </a>
-{{--                    @endcan--}}
+                    {{--                    @can("user_create")--}}
+                    <a class="btn btn-main  btn-sm"
+                       href="{{route("$page_data->root_path.create", [$page_data->parent])}}"
+                       title="Add {{trim($page_data->root_title)}}">
+                        <i class="fa fa-plus"></i>&nbsp;&nbsp;Add
+                    </a>
+                    {{--                    @endcan--}}
                 </form>
 
             </nav>
@@ -36,14 +37,14 @@
                         <table id="order-listing" class="table">
                             <thead>
                             <tr>
-{{--                                <th class="text-center">Banner</th>--}}
-{{--                                <th>Name</th>--}}
-{{--                                <th>Slug</th>--}}
-{{--                                <th>Status</th>--}}
-{{--                                <th>Icon</th>--}}
-{{--                                <th>Updated</th>--}}
+                                {{--                                <th class="text-center">Banner</th>--}}
+                                {{--                                <th>Name</th>--}}
+                                {{--                                <th>Slug</th>--}}
+                                {{--                                <th>Status</th>--}}
+                                {{--                                <th>Icon</th>--}}
+                                {{--                                <th>Updated</th>--}}
                                 @php
-                                $table_header = json_decode($page_data->data->route, true);
+                                    $table_header = json_decode($page_data->data->route, true);
                                 @endphp
                                 @foreach($table_header['index'] as $r => $index_field)
                                     <th>{{$index_field}}</th>
@@ -55,11 +56,15 @@
                             @foreach($model_data as $key => $data)
 
                                 <tr>
-                                    <td>{{$data->name}}</td>
-                                    <td>{{$data->slug}}</td>
-                                    <td>{{$data->status}}</td>
-                                    <td><i class="{{$data->icon}}"></i></td>
-                                    <td>{{$data->updated_at}}</td>
+                                    @php
+                                        $table_data = json_decode($data->data, true);
+                                    @endphp
+                                    {{--                                    {{dd($table_data)}}--}}
+                                    @foreach($table_data as $r => $index_field)
+                                        @if(in_array($r, $table_header['index']))
+                                            <td>{{$index_field}}</td>
+                                        @endif
+                                    @endforeach
                                     <td style="text-align: right;">
                                         @can('user_view')
                                             <a href="#" class="btn btn-outline-success btn-sm btn-rounded mr-1"
@@ -92,7 +97,6 @@
                     </div>
                 </div>
             </div>
-
 
 
         </div>

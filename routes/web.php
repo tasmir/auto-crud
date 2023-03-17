@@ -45,6 +45,8 @@ Route::prefix(trans("lang.backend.url_prefix"))->name(trans("lang.backend.name_p
             Route::get('/', [App\Http\Controllers\Backend\DataStoreController::class, 'index'])->name('index');
             Route::Post('/', [App\Http\Controllers\Backend\DataStoreController::class, 'store'])->name('store');
             Route::get('/create', [App\Http\Controllers\Backend\DataStoreController::class, 'create'])->name('create');
+            Route::get('{dataStore}/edit', [App\Http\Controllers\Backend\DataStoreController::class, 'edit'])->name('edit');
+            Route::PUT('{dataStore}', [App\Http\Controllers\Backend\DataStoreController::class, 'update'])->name('update');
         }
     );
 

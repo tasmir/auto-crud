@@ -19,7 +19,13 @@ export default function SideMenuOfTypes() {
 
 
     }
-
+const currentUrlChecker = (c_url) => {
+        if(c_url === currentURL) {
+            return 'active';
+        } else {
+            return '';
+        }
+}
 
     // console.log(types)
     return (
@@ -28,7 +34,7 @@ export default function SideMenuOfTypes() {
                 <>
                     <div className="sb-sidenav-menu-heading">All Types</div>
                     {types.map((field, index) => (
-                        <a key={field.id} className="nav-link" href={`${baseURL}/backend/${field.slug}`}>
+                        <a key={field.id} className={`nav-link ${currentUrlChecker(`${baseURL}/backend/${field.slug}`)}`} href={`${baseURL}/backend/${field.slug}`}>
                         <div className="sb-nav-link-icon"><i className={field.icon}></i></div>
                     {field.name}
                         </a>

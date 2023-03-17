@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('data_stores', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger("field_id")->nullable();
+            $table->json('data')->nullable();
+            $table->unsignedBigInteger("created_by")->nullable();
+            $table->unsignedBigInteger("updated_by")->nullable();
+            $table->unsignedBigInteger("deleted_by")->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
