@@ -26,31 +26,21 @@ Route::get('spa', function () {
 });
 
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix(trans("lang.backend.url_prefix"))->name(trans("lang.backend.name_prefix"))->group(function () {
-
-//    Route::prefix('/venue')->group(
-//        function () {
-//            Route::resource('amenity', App\Http\Controllers\Backend\AmenityController::class);
-//            Route::post('amenity-data-rearange', [App\Http\Controllers\Backend\AmenityController::class, 'rearangStore'])->name('amenity.rearang.store');
-//            Route::post('amenity-data-status', [App\Http\Controllers\Backend\AmenityController::class, 'statusChange'])->name('amenity.status.change');
-//            // Route::get('{id}/edit', [App\Http\Controllers\Backend\VenueController::class, 'edit'])->name('venue.edit');
-//        }
-//    );
-//    Route::get('types/{type:}/edit', [App\Http\Controllers\Backend\TypesController::class, 'edit'])->name('types.edit');
+    Route::post('/type/slug-checker', [App\Http\Controllers\Backend\TypesController::class, 'slugChecking'])->name('types.slug.check');
+    Route::post('/type/list', [App\Http\Controllers\Backend\TypesController::class, 'list'])->name('types.list');
     Route::resource('types', App\Http\Controllers\Backend\TypesController::class);
 
     Route::prefix('{field:slug}')->name("field.")->group(
         function () {
-            Route::get('/', [App\Http\Controllers\Backend\DataStoreController::class, 'index'])->name('index');
-            Route::Post('/', [App\Http\Controllers\Backend\DataStoreController::class, 'store'])->name('store');
-            Route::get('/create', [App\Http\Controllers\Backend\DataStoreController::class, 'create'])->name('create');
-            Route::get('{dataStore}/edit', [App\Http\Controllers\Backend\DataStoreController::class, 'edit'])->name('edit');
+            Route::GET('/', [App\Http\Controllers\Backend\DataStoreController::class, 'index'])->name('index');
+            Route::POST('/', [App\Http\Controllers\Backend\DataStoreController::class, 'store'])->name('store');
+            Route::GET('/create', [App\Http\Controllers\Backend\DataStoreController::class, 'create'])->name('create');
+            Route::GET('{dataStore}/edit', [App\Http\Controllers\Backend\DataStoreController::class, 'edit'])->name('edit');
             Route::PUT('{dataStore}', [App\Http\Controllers\Backend\DataStoreController::class, 'update'])->name('update');
+            Route::DELETE('{dataStore}', [App\Http\Controllers\Backend\DataStoreController::class, 'destroy'])->name('destroy');
         }
     );
-
-//    Route::resource('category', App\Http\Controllers\Backend\EventCategoryController::class)->except(['create', 'show']);
 
 });
 
@@ -58,5 +48,8 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::post('/type-slug-checker', [App\Http\Controllers\Backend\TypesController::class, 'slugChecking']);
 
+
+Route::prefix('{field:slug}')->name("field.")->group(function () {
+    Route::get('/', [App\Http\Controllers\Backend\DataStoreController::class, 'index'])->name('index');
+});

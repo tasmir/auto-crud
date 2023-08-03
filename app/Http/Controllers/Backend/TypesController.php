@@ -46,19 +46,21 @@ class TypesController extends Controller
             "dependency" => $this->dependency,
             "submodel" => ""
         ];
-        $model_data = Field::all();
+
         if ($request->ajax()) {
+            $model_data =  Field::where('status', 1)->select(['id', 'name', 'slug', 'icon'])->get();
             return response()->json([
                 'status' => 'success',
                 'status_code' => '200',
                 'message' => "",
                 'data' => $model_data
             ]);
-        } else {
+        }
+            $model_data = Field::all();
 //        $model_data = [];
             //        return view('pages.' . $root_folder . '.index', compact('submodel', 'root_icon', 'root_path', 'root_title', 'model_data', 'venue', 'dependency'));
             return view("$page_data->root_folder.index", compact('model_data', 'page_data'));
-        }
+
     }
 
     /**
@@ -75,7 +77,9 @@ class TypesController extends Controller
             "root_folder" => $this->root_folder,
             "dependency" => $this->dependency,
             "submodel" => "Create",
-            "action" => route("$this->root_path.store")
+            "action" => route("$this->root_path.store"),
+            "slug_check" => route("$this->root_path.slug.check"),
+            "list" => route("$this->root_path.list"),
         ];
 
 
@@ -176,7 +180,7 @@ class TypesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $types)
+    public function edit(Request $request, Field $type)
     {
 //        $sql = Field::where('id', '!=' , $request->id)->where(DB::raw('lower(name)'), trim(strtolower($request->name)))->get();
 //        dd($sql);
@@ -187,20 +191,22 @@ class TypesController extends Controller
             "root_folder" => $this->root_folder,
             "dependency" => $this->dependency,
             "submodel" => "Update",
-            "action" => route("$this->root_path.update", $types)
+            "action" => route("$this->root_path.update", $type),
+            "slug_check" => route("$this->root_path.slug.check"),
+            "list" => route("$this->root_path.list"),
         ];
 
-        $amenity = Field::findOrFail($types);
+//        $amenity = Field::findOrFail($types);
         if ($request->ajax()) {
             return response()->json([
                 'status' => 'success',
                 'status_code' => '200',
                 'message' => "",
-                'data' => $amenity
+                'data' => $type
             ]);
         } else {
 
-            return view("$page_data->root_folder.create", compact('page_data', 'amenity',));
+            return view("$page_data->root_folder.create", compact('page_data',));
         }
     }
 
@@ -338,5 +344,24 @@ class TypesController extends Controller
                 'slug' => $request->slug . '-' . $count,
             ]);
         }
+    }
+
+    public function list(Request $request)
+    {
+        if ($request->ajax()) {
+            $model_data =  Field::where('status', 1)->pluck('name', 'id');
+            return response()->json([
+                'status' => 'success',
+                'status_code' => '200',
+                'message' => "",
+                'data' => $model_data
+            ]);
+        }
+        return response()->json([
+            'status' => 'failed',
+            'status_code' => '200',
+            'message' => "Error",
+            'data' => ""
+        ]);
     }
 }

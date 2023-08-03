@@ -13,6 +13,7 @@ class DataStoreController extends Controller
 {
     public function index(Field $field)
     {
+        abort_if(($field->status != 1), 404);
         $page_data = (object)[
             "root_icon" => $field->icon,
             "root_path" => trans("lang.backend.name_prefix") .'field',
@@ -32,6 +33,7 @@ class DataStoreController extends Controller
 
     public function create(Field $field)
     {
+        abort_if(($field->status != 1), 404);
         $page_data = (object)[
             "root_icon" => $field->icon,
             "root_path" => trans("lang.backend.name_prefix") .'field',
@@ -51,6 +53,7 @@ class DataStoreController extends Controller
 
     public function store(Request $request, Field $field)
     {
+        abort_if(($field->status != 1), 404);
         try {
             $root_path = trans("lang.backend.name_prefix") . 'field';
             $root_title = $field->name;
@@ -81,6 +84,7 @@ class DataStoreController extends Controller
     }
 
     public function edit(Field $field, DataStore $dataStore) {
+        abort_if(($field->status != 1), 404);
         $page_data = (object)[
             "root_icon" => $field->icon,
             "root_path" => trans("lang.backend.name_prefix") .'field',
@@ -96,7 +100,7 @@ class DataStoreController extends Controller
 
     public function update(Request $request, Field $field, DataStore $dataStore)
     {
-//        dd($request->all());
+        abort_if(($field->status != 1), 404);
         try {
             $root_path = trans("lang.backend.name_prefix") . 'field';
             $root_title = $field->name;
@@ -126,5 +130,11 @@ class DataStoreController extends Controller
             return redirect()->back();
         }
     }
+
+    public function destroy($field)
+    {
+        abort_if(($field->status != 1), 404);
+    }
+
 
 }

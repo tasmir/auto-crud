@@ -40,6 +40,7 @@
                                 <th>Slug</th>
                                 <th>Status</th>
                                 <th>Icon</th>
+                                <th>Status</th>
                                 <th>Updated</th>
                                 <th style="text-align: right;">Actions</th>
                             </tr>
@@ -52,6 +53,7 @@
                                     <td>{{$data->slug}}</td>
                                     <td>{{$data->status}}</td>
                                     <td><i class="{{$data->icon}}"></i></td>
+                                    <td>{{$data->status}}</td>
                                     <td>{{$data->updated_at}}</td>
                                     <td style="text-align: right;">
                                         @can('user_view')
@@ -127,14 +129,14 @@
             color: #6c757d;
         }
 
-        .table tr td:nth-child(1),
-        .table tr td:nth-child(2),
+        /*.table tr td:nth-child(1),*/
+        /*.table tr td:nth-child(2),*/
         .table tr td:nth-child(3),
         .table tr td:nth-child(4) {
             max-width: 22%;
         }
 
-        .table tr td:nth-child(6) {
+        .table tr td:nth-child(7) {
             text-align: right;
         }
 
