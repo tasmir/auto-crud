@@ -45,9 +45,19 @@ class DataStoreController extends Controller
             "data" => $field,
         ];
 
-
+        $dr = collect(json_decode($field->field, true))->where('static', 'dynamic')
+            ->map(function ($item, $key) {
+            return $item["dynamic_option"];
+        });
+        $options = DataStore::whereIn('field_id', $dr->all())->select('id', 'field_id', 'data')->get();
+        $options = $options->map(function ($item, $key) {
+            $items = json_decode($item->data, true);
+            return ['id'=> $item->id,  'field_id' => $item->field_id, 'title' => @$items['title']];
+        })->groupBy('field_id');
+        $dynamic_options = $options->all();
+//        dd($dynamic_options);
         $dataStore = new DataStore();
-        return view("$page_data->root_folder.create", compact('page_data', 'dataStore',));
+        return view("$page_data->root_folder.create", compact('page_data', 'dataStore', 'dynamic_options'));
 //        return view("$page_data->root_folder.edit", compact('page_data', 'amenity',));
     }
 

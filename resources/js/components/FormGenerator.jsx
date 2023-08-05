@@ -329,7 +329,7 @@ export default function FormGenerator() {
                                                                                         number.dynamic_option = value;
                                                                                         handleChange(number.id, number)
                                                                                     }}>
-                                                                                {Object.entries(dynamicOptions).map((option, optionIndex) => <option key={option[0]} value={optionIndex}>{option[1]}</option>)}
+                                                                                {Object.entries(dynamicOptions).map((option, optionIndex) => <option key={optionIndex} value={option[0]}>{option[1]}</option>)}
                                                                             </select>
                                                                         </>)}
                                                                 </div>)

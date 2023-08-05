@@ -37,10 +37,14 @@
                 @php
                 $data_value = json_decode($dataStore->data, true);
                 @endphp
+
                 @foreach(json_decode($page_data->data->field, true) as $input)
                     @if($input["type"] == "text" || $input["type"] == "date" || $input["type"] == "email" || $input["type"] == "number" || $input["type"] == "tel" )
                         @include("backend.pages.data_store.partials.text", ['input' => $input, 'value' => isset($data_value[$input["name"]]) ? $data_value[$input["name"]] : null])
+                    @elseif($input["type"] == "select")
+                        @include("backend.pages.data_store.partials.select", ['input' => $input, 'value' => isset($data_value[$input["name"]]) ? $data_value[$input["name"]] : null, ])
                     @endif
+
                     {{--                    {{dd($input["type"])}}--}}
                 @endforeach
 
