@@ -9,9 +9,12 @@
            required="required">
         @if(@$input["static"] == "dynamic")
             @foreach($dynamic_options[$input["dynamic_option"]] as $option)
-
-        <option value="{{$option['id']}}">{{$option['title']}}</option>
+                <option value="{{$option['id']}}">{{$option['title']}}</option>
             @endforeach
-            @endif
+        @elseif(@$input["static"] == "static")
+            @foreach($input["static_option"] as $option)
+                <option value="{{$option['key']}}">{{$option['value']}}</option>
+            @endforeach
+        @endif
     </select>
 </div>

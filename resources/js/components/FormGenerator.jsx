@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import RouteFields from "./RouteFields";
@@ -18,13 +18,15 @@ export default function FormGenerator() {
     const [clickOption, setClickOption] = useState([clickOptionCount]);
     const deleteOptionValue = value => {
         setClickOption(oldValues => {
-            return oldValues.filter(clickOption => clickOption !== value)
+            return number.static_option.filter(clickOption => clickOption !== value)
         })
+        // number.static_option.filter(clickOption => clickOption !== value)
     }
     const [baseURL, setBaseURL] = useState();
     const [currentURL, setCurrentURL] = useState();
     const [action, setAction] = useState();
     const [toDo, setToDo] = useState();
+    const typingTimeoutRef = useRef(null);
 
     const loadPageData = () => {
         setBaseURL(document.getElementById('base_url').value);
@@ -249,10 +251,13 @@ export default function FormGenerator() {
                                                                             number.type = value;
                                                                             if(value === "select") {
                                                                                 number.static = "static";
+                                                                                number.static_option = [];
+                                                                                number.static_option[0] = {key: "", value: ""};
+                                                                                // number.hasOwnProperty("static_option")
                                                                             }
                                                                             handleChange(number.id, number)
-                                                                            setClickOptionCount(0);
-                                                                            setClickOption([clickOptionCount]);
+                                                                            // setClickOptionCount(0);
+                                                                            // setClickOption([clickOptionCount]);
                                                                         }}>
                                                                     <option value="text">Text</option>
                                                                     <option value="date">Date</option>
@@ -278,6 +283,9 @@ export default function FormGenerator() {
                                                                                 onChange={(event) => {
                                                                                     const {name, value} = event.target
                                                                                     number.static = value;
+                                                                                    // if(value === "static") {
+                                                                                    //     console.log(number.hasOwnProperty("static_option"))
+                                                                                    // }
                                                                                     handleChange(number.id, number)
                                                                                 }}>
                                                                             <option value="static">Static Value</option>
@@ -296,25 +304,58 @@ export default function FormGenerator() {
                                                                                        readOnly/>
                                                                                 <span className="input-group-text"
                                                                                       onClick={() => {
-                                                                                          setClickOption(oldArray => [...oldArray, clickOptionCount + 1])
-                                                                                          setClickOptionCount(clickOptionCount + 1);
+                                                                                          if(number.hasOwnProperty("static_option")) {
+                                                                                              let le = number.static_option.length;
+                                                                                              number.static_option[le] = {key: le, value: ""};
+                                                                                              handleChange(number.id, number)
+                                                                                          }
+                                                                                          // setClickOption(oldArray => [...oldArray, clickOptionCount + 1])
+                                                                                          // setClickOptionCount(clickOptionCount + 1);
                                                                                       }}><i className="fa fa-plus"></i></span>
                                                                             </div>
+                                                                            {/*{console.log(number)}*/}
+                                                                            {/*{Object.entries(number.static_option).map((option, optionIndex) => console.log(option))}*/}
                                                                             {
-                                                                                clickOption.map((option, optionIndex) =>
-
-                                                                                    <div key={optionIndex}
+                                                                                // <>{console.log("number.static_option")}</>
+                                                                                // <>{console.log(number.static_option)}</>
+                                                                                // clickOption.map((option, optionIndex) =>
+                                                                                // clickOption.map((option, optionIndex) =>
+                                                                                // Object.entries(number.static_option).map((option, optionIndex) =>
+                                                                                number.static_option.map((option, optionIndex) =>
+                                                                                    <div key={option['key']}
                                                                                          className="input-group">
                                                                                         <input className="form-control"
-                                                                                               defaultValue="Options"
+                                                                                               defaultValue={option['key']}
+                                                                                               onChange={(event) => {
+
+                                                                                                   if (typingTimeoutRef.current) {
+                                                                                                       clearTimeout(typingTimeoutRef.current);
+                                                                                                   }
+                                                                                                   typingTimeoutRef.current = setTimeout(function () {
+                                                                                                       const {name, value} = event.target
+                                                                                                       number.static_option[optionIndex] = {key: value, value: option['value']};
+                                                                                                       handleChange(number.id, number)
+                                                                                                   }, 500);
+
+                                                                                               }}
                                                                                                name={`field[${number.id}][options][${option}][key]`}/>
                                                                                         <input className="form-control"
-                                                                                               defaultValue="Options"
+                                                                                               defaultValue={option['value']}
+                                                                                               onChange={(event) => {
+                                                                                                   const {name, value} = event.target
+                                                                                                   number.static_option[optionIndex] = {key: option['key'], value: value};
+                                                                                                   handleChange(number.id, number)
+                                                                                               }}
                                                                                                name={`field[${number.id}][options][${option}][value]`}/>
                                                                                         <span
                                                                                             className="input-group-text"
-                                                                                            onClick={() => deleteOptionValue(option)}><i
+                                                                                            onClick={() => {
+                                                                                                // deleteOptionValue(option)
+                                                                                                number.static_option = number.static_option.filter(clickOption => clickOption !== option)
+                                                                                                handleChange(number.id, number)
+                                                                                            }}><i
                                                                                             className="fa-solid fa-xmark"></i>&nbsp;</span>
+                                                                                        {console.log(option)}
                                                                                     </div>
                                                                                 )
                                                                             }
